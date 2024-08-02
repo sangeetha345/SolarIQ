@@ -13,7 +13,7 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Path to the CSV file
-file_path = "/workspaces/Solar-Power-Estimator/96-Site_DKA-MasterMeter1.csv"
+file_path = "/workspaces/Solar-Power-Estimator/data/solar_data.csv"
 
 # Load the CSV file into a DataFrame
 df = spark.read.csv(file_path, header=True, inferSchema=True)
