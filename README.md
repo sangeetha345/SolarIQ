@@ -1,1 +1,1 @@
-# Colorization
+# Solar Power Estimator and Analyzer
