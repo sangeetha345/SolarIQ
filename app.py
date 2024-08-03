@@ -454,7 +454,7 @@ elif selected_subpage == 'ML Model Estimation':
         deviations_plot(forecasted_data_MLP)
 
         #### shap values
-        MLP_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Energy/main/fitted_models/MLP_Shap.csv', sep = ',')
+        MLP_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Energy/main/fitted_models/MLP_Shap.csv', sep = '\t')
 
         col1, col2 = st.columns(2)
         with col1:
@@ -516,7 +516,7 @@ elif selected_subpage == 'ML Model Estimation':
         deviations_plot(forecasted_data_XGB)
 
         #### shap values
-        XGB_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/XGB_Shap.csv', sep = ',')
+        XGB_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/XGB_Shap.csv', sep = '\t')
         
 
         col1, col2 = st.columns(2)
@@ -576,7 +576,7 @@ elif selected_subpage == 'ML Model Estimation':
         deviations_plot(forecasted_data_RF)
 
         #### shap values
-        RF_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/RF_Shap.csv', sep = ',')
+        RF_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/RF_Shap.csv', sep = '\t')
 
         col1, col2 = st.columns(2)
         with col1:
