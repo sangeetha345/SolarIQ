@@ -8,17 +8,17 @@ The Solar Power Estimator project estimates solar power generation using photovo
 The web app can be accessed through the following link : https://d7xwpzlfkpnxcf8mvpnoyz.streamlit.app/
 
 ## Key Features
--- Data Extraction: Collects large quantities of PV and meteorological data from multiple sources.
--- Data Transformation: Transforms and standardizes data for consistent analysis.
--- Missing Values Handling: Implements strategies for dealing with missing data and outliers to ensure data quality.
--- Machine Learning Modeling: Loads and models machine learning algorithms to improve prediction accuracy.
--- Forecasting: Provides a three-day forecast of solar power generation.
--- Streamlit App: A user-friendly web application to visualize and interact with the solar power estimations.
+- Data Extraction: Collects large quantities of PV and meteorological data from multiple sources.
+- Data Transformation: Transforms and standardizes data for consistent analysis.
+- Missing Values Handling: Implements strategies for dealing with missing data and outliers to ensure data quality.
+- Machine Learning Modeling: Loads and models machine learning algorithms to improve prediction accuracy.
+- Forecasting: Provides a three-day forecast of solar power generation.
+- Streamlit App: A user-friendly web application to visualize and interact with the solar power estimations.
 
 ## Usage
--- Interact with the app to input relevant PV and meteorological data.
--- View the estimated solar power generation and three-day forecast.
--- Visualize data trends and patterns through the provided charts.
+- Interact with the app to input relevant PV and meteorological data.
+- View the estimated solar power generation and three-day forecast.
+- Visualize data trends and patterns through the provided charts.
 
 ## Contributing
 Contributions are welcome! If you have suggestions for improvements or new features, please open an issue or submit a pull request.
