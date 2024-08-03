@@ -1,5 +1,5 @@
 import streamlit as st
-st.set_page_config(page_title = "Solar Energy Forecasting Tool", page_icon = ':sun_small_cloud:', layout="wide")
+st.set_page_config(page_title = "Solar Power Forecasting Tool", page_icon = ':sun_small_cloud:', layout="wide")
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
