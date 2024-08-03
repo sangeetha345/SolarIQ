@@ -43,7 +43,7 @@ st.title('Forecasting Energy Generation Output of Solar Panels Using Meteorologi
 #import main functions from github    
 #@st.cache_resource
 def import_functions():
-        url = "https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Main_Functions.py"
+        url = "https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/main_functions.py"
 
         response = requests.get(url)
 
@@ -64,7 +64,7 @@ def import_functions():
 module = import_functions()
 
 config = {
-    'file_path': "https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/SunPower_Full.csv",
+    'file_path': "https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/SunPower_Full.csv",
     'target_variable': 'Active_Power',
     'predictors': ['temperature_2m', 'relativehumidity_2m', 'direct_radiation', 'diffuse_radiation',  'windspeed_10m', 'cloudcover', 'season'],
     'categorical_variables': ['season'],
@@ -90,10 +90,10 @@ def load_data(url, sep):
     df = pd.read_csv(url, sep,parse_dates=['timestamp'], index_col='timestamp')
     return df
 
-url = 'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/SunPower_Full.csv'
+url = 'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/SunPower_Full.csv'
 
 #read dataset
-df = load_data(url, '\t')
+df = load_data(url, ',')
 
 #subpages 
 selected_subpage = option_menu(None, ['Home', 'EDA', 'ML Model Estimation', 'Forecast'], 
@@ -117,7 +117,7 @@ if selected_subpage == "Home":
         col1, col2= st.columns(2)
         #image
         with col1:
-                st.image('https://github.com/Alex-Malainic/Solar-Energy/blob/main/Site-18.jpg?raw=true', caption = 'PV Panel located in DKA Solar Centre. Alice Springs, Australia')
+                st.image('https://github.com/phanee16/Solar-Power-Estimator/blob/main/solar_image.jpg?raw=true', caption = 'PV Panel located in DKA Solar Centre. Alice Springs, Australia')
 
         #map
         with col2:
@@ -390,7 +390,7 @@ elif selected_subpage == 'ML Model Estimation':
         
         @st.cache_data
         def main_functions():
-                df = module.load_data('https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/SunPower_Full.csv')
+                df = module.load_data('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/SunPower_Full.csv')
                 df = module.add_season(df)
                 df = module.choose_interval(df)
                 train, test = module.split_data(df)
@@ -454,7 +454,7 @@ elif selected_subpage == 'ML Model Estimation':
         deviations_plot(forecasted_data_MLP)
 
         #### shap values
-        MLP_shap_df = pd.read_csv('https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/MLP_Shap.csv', sep = '\t')
+        MLP_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Energy/main/fitted_models/MLP_Shap.csv', sep = ',')
 
         col1, col2 = st.columns(2)
         with col1:
@@ -516,7 +516,7 @@ elif selected_subpage == 'ML Model Estimation':
         deviations_plot(forecasted_data_XGB)
 
         #### shap values
-        XGB_shap_df = pd.read_csv('https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/XGB_Shap.csv', sep = ',')
+        XGB_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/XGB_Shap.csv', sep = ',')
         
 
         col1, col2 = st.columns(2)
@@ -576,7 +576,7 @@ elif selected_subpage == 'ML Model Estimation':
         deviations_plot(forecasted_data_RF)
 
         #### shap values
-        RF_shap_df = pd.read_csv('https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/RF_Shap.csv', sep = ',')
+        RF_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/RF_Shap.csv', sep = ',')
 
         col1, col2 = st.columns(2)
         with col1:
@@ -615,7 +615,7 @@ elif selected_subpage == 'Forecast':
                 for interval in config['time_intervals']:
                         interval_dataset = df[df['time_interval'] == interval].copy()
                         try:
-                                grid = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/ClassifiedWeatherTypes/RF_Weather_{interval}_.pkl'))
+                                grid = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/classified_weather_types/RF_Weather_{interval}_.pkl'))
                                 classified_weather_type = module.predict_weather_type(grid, interval_dataset[config['predictors']].copy())
                         except:
                                 raise ValueError("Importing weather type classifiers failed.")
@@ -629,7 +629,7 @@ elif selected_subpage == 'Forecast':
         def standardize_data_weather_forecast(df):
                 X_new_test = df[config['standardize_predictor_list']]
                 #save fitted predictor
-                predictor_scaler_fit = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Standardizers/std_scaler.bin'))
+                predictor_scaler_fit = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_standardizers/std_scaler.bin'))
                 X_new_test = predictor_scaler_fit.transform(X_new_test)
                 
                 new_stand_df = pd.DataFrame(X_new_test, index=df[config['standardize_predictor_list']].index, columns=df[config['standardize_predictor_list']].columns)
@@ -641,7 +641,7 @@ elif selected_subpage == 'Forecast':
                 for interval, weather_type in product(config['time_intervals'], config['weather_types']):
                         X_test = new_stand_test[(new_stand_test['time_interval'] == interval) & (new_stand_test['weather_type'] == weather_type)][config['predictors']]
                         if len(X_test != 0):
-                                md = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/MLP_fitted_{interval}_{weather_type}.pkl'))
+                                md = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/MLP_fitted_{interval}_{weather_type}.pkl'))
                                 predictions = md.predict(X_test)
                                 print(f"Energy Predictions done for {interval, weather_type}")
                                 TestingData=pd.DataFrame(data=X_test.copy(), columns=X_test.columns)
@@ -666,7 +666,7 @@ elif selected_subpage == 'Forecast':
 
         #unstandardize data
 
-        predictor_scaler_fit = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Standardizers/std_scaler.bin'))
+        predictor_scaler_fit = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_standardizers/std_scaler.bin'))
 
         unst_data = predictor_scaler_fit.inverse_transform(predicted_forecast[config['standardize_predictor_list']])
 

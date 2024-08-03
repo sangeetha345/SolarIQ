@@ -26,7 +26,7 @@ def load_data(url, sep):
 
 # Define constants in a dictionary
 config = {
-    'file_path': "https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/SunPower_Full.csv",
+    'file_path': "https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/SunPower_Historical.csv'",
     'target_variable': 'Active_Power',
     'predictors': ['temperature_2m', 'relativehumidity_2m', 'direct_radiation', 'diffuse_radiation',  'windspeed_10m', 'cloudcover', 'season'],
     'categorical_variables': ['season'],
@@ -38,7 +38,7 @@ config = {
 
 # Load data
 def load_data(file_path):
-    df = pd.read_csv(file_path, sep = '\t')
+    df = pd.read_csv(file_path, sep = ',')
     df.rename(columns = {'timestamp':'date'}, inplace=True)
     df['date'] = pd.to_datetime(df['date'])
     df[config['target_variable']] = df[config['target_variable']].clip(lower=0)   #set negative values to 0 
@@ -134,12 +134,12 @@ def classify_weather_type(new_train, test):
         interval_train_dataset = new_train[new_train['time_interval'] == interval].copy()
         interval_test_dataset = test[test['time_interval'] == interval].copy()
         try:
-            grid = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/ClassifiedWeatherTypes/RF_Weather_{interval}_.pkl'))
+            grid = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/classified_weather_types/RF_Weather_{interval}_.pkl'))
             #grid = joblib.load(f'ClassifiedWeatherTypes\\RF_Weather_{interval}_.pkl')  #load fitted model if exists
             classified_weather_type = predict_weather_type(grid, interval_test_dataset[config['predictors']].copy())
         except:
             grid = train_rf_classifier(interval_train_dataset[config['predictors']] , interval_train_dataset['weather_type'])
-            joblib.dump(grid, f'ClassifiedWeatherTypes\\RF_Weather_{interval}_.pkl') #save fitted model
+            joblib.dump(grid, f'classified_weather_types\\RF_Weather_{interval}_.pkl') #save fitted model
             classified_weather_type = predict_weather_type(grid, interval_test_dataset[config['predictors']].copy())
         classified_weather_type['time_interval'] = interval
         print(f"Weather type Predictions done for {interval}")
@@ -155,7 +155,7 @@ def standardize_data(new_train, new_test):
     predictor_scaler_fit = predictor_scaler.fit(X_new_train)
     #save fitted predictor
     try:
-        with open('Fitted_Standardizers\\std_scaler.bin', 'wb') as f:
+        with open('fitted_standardizers\\std_scaler.bin', 'wb') as f:
             joblib.dump(predictor_scaler_fit, f)
     except:
         pass
@@ -228,12 +228,12 @@ def train_predict_MLP_model(new_stand_train, new_stand_test):
         y_train = new_stand_train[(new_stand_train['time_interval'] == interval) & (new_stand_train['weather_type'] == weather_type)][config['target_variable']]
         X_test = new_stand_test[(new_stand_test['time_interval'] == interval) & (new_stand_test['weather_type'] == weather_type)][config['predictors']]
         try:
-            md = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/MLP_fitted_{interval}_{weather_type}.pkl'))
+            md = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/MLP_fitted_{interval}_{weather_type}.pkl'))
             #md = joblib.load(f'Fitted_Models\\MLP_fitted_{interval}_{weather_type}.pkl')
             predictions = md.predict(X_test)
         except:
             md = train_MLP_regressor(X_train, y_train)
-            joblib.dump(md, f'Fitted_Models\\MLP_fitted_{interval}_{weather_type}.pkl') #save fitted model
+            joblib.dump(md, f'fitted_models\\MLP_fitted_{interval}_{weather_type}.pkl') #save fitted model
             predictions = md.predict(X_test)
             
         print(f"Energy Predictions done for {interval, weather_type}")
@@ -252,13 +252,13 @@ def train_predict_XGB_model(new_stand_train, new_stand_test):
         y_train = new_stand_train[(new_stand_train['time_interval'] == interval) & (new_stand_train['weather_type'] == weather_type)][config['target_variable']]
         X_test = new_stand_test[(new_stand_test['time_interval'] == interval) & (new_stand_test['weather_type'] == weather_type)][config['predictors']]
         try:
-            md = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/XGB_fitted_{interval}_{weather_type}.pkl'))
+            md = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/XGB_fitted_{interval}_{weather_type}.pkl'))
             #md = joblib.load(f'Fitted_Models\\XGB_fitted_{interval}_{weather_type}.pkl')
             predictions = md.predict(X_test)
         except:
             md = train_XGB_regressor(X_train, y_train)
             
-            joblib.dump(md, f'Fitted_Models\\XGB_fitted_{interval}_{weather_type}.pkl') #save fitted model
+            joblib.dump(md, f'fitted_models\\XGB_fitted_{interval}_{weather_type}.pkl') #save fitted model
             predictions = md.predict(X_test)
             
         print(f"Energy Predictions done for {interval, weather_type}")
@@ -275,12 +275,12 @@ def train_predict_RF_model(new_stand_train, new_stand_test):
         y_train = new_stand_train[(new_stand_train['time_interval'] == interval) & (new_stand_train['weather_type'] == weather_type)][config['target_variable']]
         X_test = new_stand_test[(new_stand_test['time_interval'] == interval) & (new_stand_test['weather_type'] == weather_type)][config['predictors']]
         try:
-            md = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/RF_fitted_{interval}_{weather_type}.pkl'))
+            md = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/RF_fitted_{interval}_{weather_type}.pkl'))
             #md = joblib.load(f'Fitted_Models\\RF_fitted_{interval}_{weather_type}.pkl')
             predictions = md.predict(X_test)
         except:
             md = train_RF_regressor(X_train, y_train)
-            joblib.dump(md, f'Fitted_Models\\RF_fitted_{interval}_{weather_type}.pkl') #save fitted model
+            joblib.dump(md, f'fitted_models\\RF_fitted_{interval}_{weather_type}.pkl') #save fitted model
             predictions = md.predict(X_test)
             
         print(f"Energy Predictions done for {interval, weather_type}")
@@ -330,9 +330,9 @@ def train_SHAP_values(df):
         subset_data = df[(df['weather_type'] == weather_type) & (df['time_interval'] == interval)].iloc[:, :-2]
         #import models
 
-        XGB_gr = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/XGB_fitted_{interval}_{weather_type}.pkl'))
+        XGB_gr = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/XGB_fitted_{interval}_{weather_type}.pkl'))
         XGB_estimator = XGB_gr.best_estimator_
-        RF_gr = joblib.load(urlopen(f'https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/RF_fitted_{interval}_{weather_type}.pkl'))
+        RF_gr = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/RF_fitted_{interval}_{weather_type}.pkl'))
         RF_estimator = RF_gr.best_estimator_
 
         #compute shap values for current interval and weather type
@@ -350,9 +350,9 @@ def train_SHAP_values(df):
     return XGB_shap_df, RF_shap_df
 
 def import_SHAP_values():
-    MLP_shap_df = pd.read_csv("https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/MLP_Shap.csv", sep = '\t')
-    XGB_shap_df = pd.read_csv("https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/XGB_Shap.csv", sep = '\t')
-    RF_shap_df = pd.read_csv("https://raw.githubusercontent.com/Alex-Malainic/Solar-Energy/main/Fitted_Models/RF_Shap.csv", sep = '\t')
+    MLP_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/MLP_Shap.csv", sep = ',')
+    XGB_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/XGB_Shap.csv", sep = ',')
+    RF_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/RF_Shap.csv", sep = ',')
     return MLP_shap_df, XGB_shap_df, RF_shap_df
 
 # Main order of functions
