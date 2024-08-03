@@ -241,7 +241,7 @@ elif selected_subpage == 'EDA':
         def corr_plot(df):
                 fig = plt.figure(figsize = (18,17), clear = True)
                 corr = df.corr()
-                sns.heatmap(corr, annot=True, cmap='viridis', fmt='.3f')
+                sns.heatmap(corr, annot=True, cmap='flare', fmt='.3f')
                 st.pyplot(fig)
 
 
