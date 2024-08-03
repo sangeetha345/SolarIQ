@@ -213,7 +213,6 @@ rfc3986-validator==0.1.1
 rich==13.3.2
 rsa==4.9
 s3transfer==0.6.1
-schemdraw==0.19
 scikeras==0.10.0
 scikit-learn==1.2.2
 scikit-plot==0.3.7
