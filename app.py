@@ -454,7 +454,7 @@ elif selected_subpage == 'ML Model Estimation':
         deviations_plot(forecasted_data_MLP)
 
         #### shap values
-        MLP_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Energy/main/fitted_models/MLP_Shap.csv', sep = '\t')
+        MLP_shap_df = pd.read_csv('https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/MLP_Shap.csv', sep = '\t')
 
         col1, col2 = st.columns(2)
         with col1:
