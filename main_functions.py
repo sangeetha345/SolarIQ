@@ -139,7 +139,8 @@ def classify_weather_type(new_train, test):
             classified_weather_type = predict_weather_type(grid, interval_test_dataset[config['predictors']].copy())
         except:
             grid = train_rf_classifier(interval_train_dataset[config['predictors']] , interval_train_dataset['weather_type'])
-            joblib.dump(grid, f'classified_weather_types\\RF_Weather_{interval}_.pkl') #save fitted model
+            file_path = os.path.join('classified_weather_types', f'RF_Weather_{interval}_.pkl')
+            joblib.dump(grid, file_path) #save fitted model
             classified_weather_type = predict_weather_type(grid, interval_test_dataset[config['predictors']].copy())
         classified_weather_type['time_interval'] = interval
         print(f"Weather type Predictions done for {interval}")
@@ -155,7 +156,7 @@ def standardize_data(new_train, new_test):
     predictor_scaler_fit = predictor_scaler.fit(X_new_train)
     #save fitted predictor
     try:
-        with open('fitted_standardizers\\std_scaler.bin', 'wb') as f:
+        with open('fitted_standardizers/std_scaler.bin', 'wb') as f:
             joblib.dump(predictor_scaler_fit, f)
     except:
         pass
@@ -233,7 +234,8 @@ def train_predict_MLP_model(new_stand_train, new_stand_test):
             predictions = md.predict(X_test)
         except:
             md = train_MLP_regressor(X_train, y_train)
-            joblib.dump(md, f'fitted_models\\MLP_fitted_{interval}_{weather_type}.pkl') #save fitted model
+            file_path = os.path.join('fitted_models', f'MLP_fitted_{interval}_{weather_type}.pkl')
+            joblib.dump(md, file_path) #save fitted model
             predictions = md.predict(X_test)
             
         print(f"Energy Predictions done for {interval, weather_type}")
@@ -257,8 +259,8 @@ def train_predict_XGB_model(new_stand_train, new_stand_test):
             predictions = md.predict(X_test)
         except:
             md = train_XGB_regressor(X_train, y_train)
-            
-            joblib.dump(md, f'fitted_models\\XGB_fitted_{interval}_{weather_type}.pkl') #save fitted model
+            file_path = os.path.join('fitted_models', f'XGB_fitted_{interval}_{weather_type}.pkl')
+            joblib.dump(md, file_path) #save fitted model
             predictions = md.predict(X_test)
             
         print(f"Energy Predictions done for {interval, weather_type}")
@@ -280,7 +282,8 @@ def train_predict_RF_model(new_stand_train, new_stand_test):
             predictions = md.predict(X_test)
         except:
             md = train_RF_regressor(X_train, y_train)
-            joblib.dump(md, f'fitted_models\\RF_fitted_{interval}_{weather_type}.pkl') #save fitted model
+            file_path = os.path.join('fitted_models', f'RF_fitted_{interval}_{weather_type}.pkl')
+            joblib.dump(md, file_path) #save fitted model
             predictions = md.predict(X_test)
             
         print(f"Energy Predictions done for {interval, weather_type}")
