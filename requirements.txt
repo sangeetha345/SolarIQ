@@ -126,7 +126,7 @@ langcodes==3.3.0
 lerc==4.0.1
 libclang==15.0.6.1
 lightgbm==3.3.5
-llvmlite==0.39.1
+llvmlite==0.43.0
 locket==1.0.0
 LunarCalendar==0.0.9
 lxml==4.9.2
