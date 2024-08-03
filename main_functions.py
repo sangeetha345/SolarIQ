@@ -353,9 +353,9 @@ def train_SHAP_values(df):
     return XGB_shap_df, RF_shap_df
 
 def import_SHAP_values():
-    MLP_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/MLP_Shap.csv", sep = ',')
-    XGB_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/XGB_Shap.csv", sep = ',')
-    RF_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/RF_Shap.csv", sep = ',')
+    MLP_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/MLP_Shap.csv", sep = '\t')
+    XGB_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/XGB_Shap.csv", sep = '\t')
+    RF_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/RF_Shap.csv", sep = '\t')
     return MLP_shap_df, XGB_shap_df, RF_shap_df
 
 # Main order of functions
