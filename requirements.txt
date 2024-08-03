@@ -151,7 +151,7 @@ nest-asyncio==1.5.6
 networkx==3.1
 notebook==6.5.4
 notebook_shim==0.2.3
-numba==0.56.4
+numba==0.60.0
 numpy==1.23.5
 oauthlib==3.2.2
 openpyxl==3.1.2
