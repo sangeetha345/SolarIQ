@@ -503,7 +503,7 @@ elif selected_subpage == 'ML Model Estimation':
                 # Update layout for title
                 fig.update_layout(
                         title={
-                        'text': 'MLP Energy Deviations - Predicted Power vs. Actual Power',
+                        'text': 'XGB Energy Deviations - Predicted Power vs. Actual Power',
                         'y':0.9,
                         'x':0.5,
                         'xanchor': 'center',
@@ -563,7 +563,7 @@ elif selected_subpage == 'ML Model Estimation':
                 # Update layout for title
                 fig.update_layout(
                         title={
-                        'text': 'MLP Energy Deviations - Predicted Power vs. Actual Power',
+                        'text': 'RF Energy Deviations - Predicted Power vs. Actual Power',
                         'y':0.9,
                         'x':0.5,
                         'xanchor': 'center',
@@ -649,6 +649,36 @@ elif selected_subpage == 'Forecast':
                                 forecast_test = pd.concat([forecast_test, TestingData])
                 forecast_test = forecast_test.sort_index()
                 return forecast_test
+        
+        @st.cache_data
+        def predict_forecast_XGB(new_stand_test):
+                forecast_test = pd.DataFrame()
+                for interval, weather_type in product(config['time_intervals'], config['weather_types']):
+                        X_test = new_stand_test[(new_stand_test['time_interval'] == interval) & (new_stand_test['weather_type'] == weather_type)][config['predictors']]
+                        if len(X_test != 0):
+                                md = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/XGB_fitted_{interval}_{weather_type}.pkl'))
+                                predictions = md.predict(X_test)
+                                print(f"Energy Predictions done for {interval, weather_type}")
+                                TestingData=pd.DataFrame(data=X_test.copy(), columns=X_test.columns)
+                                TestingData['PredictedTotalPower']=predictions
+                                forecast_test = pd.concat([forecast_test, TestingData])
+                forecast_test = forecast_test.sort_index()
+                return forecast_test
+        
+        @st.cache_data
+        def predict_forecast_RF(new_stand_test):
+                forecast_test = pd.DataFrame()
+                for interval, weather_type in product(config['time_intervals'], config['weather_types']):
+                        X_test = new_stand_test[(new_stand_test['time_interval'] == interval) & (new_stand_test['weather_type'] == weather_type)][config['predictors']]
+                        if len(X_test != 0):
+                                md = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/RF_fitted_{interval}_{weather_type}.pkl'))
+                                predictions = md.predict(X_test)
+                                print(f"Energy Predictions done for {interval, weather_type}")
+                                TestingData=pd.DataFrame(data=X_test.copy(), columns=X_test.columns)
+                                TestingData['PredictedTotalPower']=predictions
+                                forecast_test = pd.concat([forecast_test, TestingData])
+                forecast_test = forecast_test.sort_index()
+                return forecast_test
 
 
         weather_forecast_df = get_weather_forecast_data()
@@ -660,25 +690,51 @@ elif selected_subpage == 'Forecast':
         weather_forecast_df['season'] = season
         weather_forecast_df = classify_weather_forecast_type(weather_forecast_df)
         weather_forecast_df_standardized = standardize_data_weather_forecast(weather_forecast_df)
-        predicted_forecast = predict_forecast_MLP(weather_forecast_df_standardized)
-        predicted_forecast = pd.concat([predicted_forecast, weather_forecast_df_standardized[['weather_type']]], axis = 1)
+        predicted_forecast_MLP = predict_forecast_MLP(weather_forecast_df_standardized)
+        predicted_forecast_MLP = pd.concat([predicted_forecast_MLP, weather_forecast_df_standardized[['weather_type']]], axis = 1)
+        predicted_forecast_XGB = predict_forecast_XGB(weather_forecast_df_standardized)
+        predicted_forecast_XGB = pd.concat([predicted_forecast_XGB, weather_forecast_df_standardized[['weather_type']]], axis = 1)
+        predicted_forecast_RF = predict_forecast_RF(weather_forecast_df_standardized)
+        predicted_forecast_RF = pd.concat([predicted_forecast_RF, weather_forecast_df_standardized[['weather_type']]], axis = 1)
 
 
         #unstandardize data
 
         predictor_scaler_fit = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_standardizers/std_scaler.bin'))
 
-        unst_data = predictor_scaler_fit.inverse_transform(predicted_forecast[config['standardize_predictor_list']])
+        unst_data_MLP = predictor_scaler_fit.inverse_transform(predicted_forecast_MLP[config['standardize_predictor_list']])
+        unst_data_XGB = predictor_scaler_fit.inverse_transform(predicted_forecast_XGB[config['standardize_predictor_list']])
+        unst_data_RF = predictor_scaler_fit.inverse_transform(predicted_forecast_RF[config['standardize_predictor_list']])
 
-        predicted_forecast_unst = predicted_forecast.copy()
-        predicted_forecast_unst[config['standardize_predictor_list']] = unst_data
+        predicted_forecast_unst_MLP = predicted_forecast_MLP.copy()
+        predicted_forecast_unst_MLP[config['standardize_predictor_list']] = unst_data_MLP
+        predicted_forecast_unst_XGB = predicted_forecast_XGB.copy()
+        predicted_forecast_unst_XGB[config['standardize_predictor_list']] = unst_data_XGB
+        predicted_forecast_unst_RF = predicted_forecast_RF.copy()
+        predicted_forecast_unst_RF[config['standardize_predictor_list']] = unst_data_RF
 
-        with chart_container(predicted_forecast_unst):
+        with chart_container(predicted_forecast_unst_MLP):
                         line_chart(
-                        data=predicted_forecast_unst.reset_index(),
+                        data=predicted_forecast_unst_MLP.reset_index(),
                         x='date',
                         y='PredictedTotalPower',
-                        title="Forecast - Energy Generation for the next 3 days",
+                        title="MLP Forecast - Energy Generation for the next 3 days",
+                )
+                
+        with chart_container(predicted_forecast_unst_XGB):
+                        line_chart(
+                        data=predicted_forecast_unst_XGB.reset_index(),
+                        x='date',
+                        y='PredictedTotalPower',
+                        title="XGB Forecast - Energy Generation for the next 3 days",
+                )
+                        
+        with chart_container(predicted_forecast_unst_RF):
+                        line_chart(
+                        data=predicted_forecast_unst_RF.reset_index(),
+                        x='date',
+                        y='PredictedTotalPower',
+                        title="RF Forecast - Energy Generation for the next 3 days",
                 )
                         
         #API call to get dataset

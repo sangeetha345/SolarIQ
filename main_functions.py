@@ -326,6 +326,7 @@ def evaluate_model(forecast_test, test,new_test):
 def train_SHAP_values(df):
     """ This functions computes shap values for XGB and RF looping through each interval and weather type
         The output are the shap values in the form of a dataframe, to be used as a np array in subsequent summary plots"""
+    MLP_shap_df = pd.DataFrame(columns = df.iloc[:, :-2].columns)
     XGB_shap_df = pd.DataFrame(columns = df.iloc[:, :-2].columns)
     RF_shap_df = pd.DataFrame(columns = df.iloc[:, :-2].columns)
     for interval, weather_type in product(config['time_intervals'], config['weather_types']):
@@ -333,24 +334,30 @@ def train_SHAP_values(df):
         subset_data = df[(df['weather_type'] == weather_type) & (df['time_interval'] == interval)].iloc[:, :-2]
         #import models
 
+        MLP_gr = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/MLP_fitted_{interval}_{weather_type}.pkl'))
+        MLP_estimator = MLP_gr.best_estimator_
         XGB_gr = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/XGB_fitted_{interval}_{weather_type}.pkl'))
         XGB_estimator = XGB_gr.best_estimator_
         RF_gr = joblib.load(urlopen(f'https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/fitted_models/RF_fitted_{interval}_{weather_type}.pkl'))
         RF_estimator = RF_gr.best_estimator_
 
         #compute shap values for current interval and weather type
+        MLP_explainer = shap.DeepExplainer(MLP_estimator)
         XGB_explainer = shap.TreeExplainer(XGB_estimator)
         RF_explainer = shap.TreeExplainer(RF_estimator)
+        MLP_shap_values = MLP_explainer.shap_values(subset_data)
         XGB_shap_values = XGB_explainer.shap_values(subset_data)
         RF_shap_values = RF_explainer.shap_values(subset_data)
 
+        MLP_shap_subset = pd.DataFrame(MLP_shap_values, columns = subset_data.columns)
         XGB_shap_subset = pd.DataFrame(XGB_shap_values, columns = subset_data.columns)
         RF_shap_subset = pd.DataFrame(RF_shap_values, columns = subset_data.columns)
 
+        MLP_shap_df = pd.concat([MLP_shap_df, MLP_shap_subset])
         XGB_shap_df = pd.concat([XGB_shap_df, XGB_shap_subset])
         RF_shap_df = pd.concat([RF_shap_df, RF_shap_subset])
 
-    return XGB_shap_df, RF_shap_df
+    return MLP_shap_df, XGB_shap_df, RF_shap_df
 
 def import_SHAP_values():
     MLP_shap_df = pd.read_csv("https://raw.githubusercontent.com/phanee16/Solar-Power-Estimator/main/Fitted_Models/MLP_Shap.csv", sep = '\t')
