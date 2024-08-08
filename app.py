@@ -437,7 +437,7 @@ elif selected_subpage == 'ML Model Estimation':
                 fig['data'][0]['line']['color']='rgb(252, 33, 52)'  #actual total power
                 fig['data'][0]['line']['width']=5  
                 fig['data'][1]['line']['color']='rgb(25, 159, 52)'  #predicted total power
-                fig['data'][1]['line']['width']=3
+                fig['data'][1]['line']['width']=5
                 # Update layout for title
                 fig.update_layout(
                         title={
@@ -499,7 +499,7 @@ elif selected_subpage == 'ML Model Estimation':
                 fig['data'][0]['line']['color']='rgb(252, 33, 52)'  #actual total power
                 fig['data'][0]['line']['width']=5  
                 fig['data'][1]['line']['color']='rgb(25, 159, 52)'  #predicted total power
-                fig['data'][1]['line']['width']=3
+                fig['data'][1]['line']['width']=5
                 # Update layout for title
                 fig.update_layout(
                         title={
@@ -559,7 +559,7 @@ elif selected_subpage == 'ML Model Estimation':
                 fig['data'][0]['line']['color']='rgb(252, 33, 52)'  #actual total power
                 fig['data'][0]['line']['width']=5  
                 fig['data'][1]['line']['color']='rgb(25, 159, 52)'  #predicted total power
-                fig['data'][1]['line']['width']=3
+                fig['data'][1]['line']['width']=5
                 # Update layout for title
                 fig.update_layout(
                         title={
